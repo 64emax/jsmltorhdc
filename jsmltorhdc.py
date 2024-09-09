@@ -30,6 +30,8 @@ rhdc["format"] = {
 rhdc["groups"] = []
 
 def parsemacolumn(rows: list[dict]):
+    global globalstarmask
+
     courses = []
 
     coursename = str()
@@ -39,21 +41,24 @@ def parsemacolumn(rows: list[dict]):
         typ = row["Type"]
 
         if typ == 2:
-            courses.append({
-                "name": coursename,
-                "data": coursedata.copy(),
-            })
+            if len(coursedata) != 0:
+                courses.append({
+                    "name": coursename,
+                    "data": coursedata.copy(),
+                })
             coursedata.clear()
             coursename = row["text"]
         elif typ == 1:
             coursedata.append({
                 "offset": row["offset"],
-                "mask": row["starMask"],
+                "mask": row["starMask"] & globalstarmask,
             })
         else:
             raise "wat"
 
     return courses.copy()
+
+globalstarmask = (2 ** jsml.get("starsShown", 8)) - 1
 
 if jsml.get("courseDescription") != None:
     courses = parsemacolumn(jsml["courseDescription"])
