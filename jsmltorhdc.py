@@ -55,6 +55,11 @@ def parsemacolumn(rows: list[dict]):
             })
         else:
             raise "wat"
+    if len(coursedata) != 0:
+        courses.append({
+            "name": coursename,
+            "data": coursedata.copy(),
+        })
 
     return courses.copy()
 
